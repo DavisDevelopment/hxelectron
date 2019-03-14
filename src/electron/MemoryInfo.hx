@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/memory-info>
+	@see http://electronjs.org/docs/api/structures/memory-info
 **/
-@:require(js, electron) typedef MemoryInfo = {
+typedef MemoryInfo = {
 	/**
 		Process id of the process.
 	**/

@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/web-source>
+	@see http://electronjs.org/docs/api/structures/web-source
 **/
-@:require(js, electron) typedef WebSource = {
+typedef WebSource = {
 	var code : String;
 	var url : String;
 	/**

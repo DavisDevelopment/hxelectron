@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/process-metric>
+	@see http://electronjs.org/docs/api/structures/process-metric
 **/
-@:require(js, electron) typedef ProcessMetric = {
+typedef ProcessMetric = {
 	/**
 		Process id of the process.
 	**/
@@ -13,11 +12,7 @@ package electron;
 	**/
 	var type : String;
 	/**
-		Memory information for the process.
-	**/
-	var memory : MemoryInfo;
-	/**
 		CPU usage of the process.
 	**/
-	var cpu : CPUUsage;
+	var cpu : electron.CPUUsage;
 }

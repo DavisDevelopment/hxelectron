@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/remove-client-certificate>
+	@see http://electronjs.org/docs/api/structures/remove-client-certificate
 **/
-@:require(js, electron) typedef RemoveClientCertificate = {
+typedef RemoveClientCertificate = {
 	/**
 		clientCertificate.
 	**/

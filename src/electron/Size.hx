@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/size>
+	@see http://electronjs.org/docs/api/structures/size
 **/
-@:require(js, electron) typedef Size = {
+typedef Size = {
 	var width : Float;
 	var height : Float;
 }

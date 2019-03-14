@@ -1,0 +1,5 @@
+--no-output
+-js _
+-xml haxedoc.xml
+-lib electron
+--macro include('electron')

@@ -1,13 +1,12 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/thumbar-button>
+	@see http://electronjs.org/docs/api/structures/thumbar-button
 **/
-@:require(js, electron) typedef ThumbarButton = {
+typedef ThumbarButton = {
 	/**
 		The icon showing in thumbnail toolbar.
 	**/
-	var icon : NativeImage;
+	var icon : electron.NativeImage;
 	var click : haxe.Constraints.Function;
 	/**
 		The text of the button's tooltip.

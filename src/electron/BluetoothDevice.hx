@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/bluetooth-device>
+	@see http://electronjs.org/docs/api/structures/bluetooth-device
 **/
-@:require(js, electron) typedef BluetoothDevice = {
+typedef BluetoothDevice = {
 	var deviceName : String;
 	var deviceId : String;
 }

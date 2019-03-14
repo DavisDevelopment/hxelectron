@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/printer-info>
+	@see http://electronjs.org/docs/api/structures/printer-info
 **/
-@:require(js, electron) typedef PrinterInfo = {
+typedef PrinterInfo = {
 	var name : String;
 	var description : String;
 	var status : Float;

@@ -3,7 +3,7 @@ import js.Browser.console;
 import js.Browser.document;
 import js.Browser.window;
 import js.Node.process;
-import js.node.ChildProcess.spawn;
+import js.node.ChildProcess;
 
 class App {
 
@@ -17,12 +17,13 @@ class App {
 
             document.getElementById( 'logo-haxe' ).style.opacity = '1';
 
-            setText( 'system', process.platform +' '+ process.arch );
-            setText( 'node', 'node '+process.version );
-            setText( 'electron', 'electron '+process.versions['electron'] );
+            setText( 'system-version', process.platform +' '+ process.arch );
+            setText( 'node-version', 'node '+process.version );
+            setText( 'electron-version', 'electron '+process.versions['electron'] );
 
-            spawn( 'haxe', ['-version'] ).stderr.on( 'data', function(buf) {
-                setText( 'haxe', 'haxe $buf' );
+            ChildProcess.spawn( 'haxe', ['-version'] ).stdout.on( 'data', function(buf) {
+				var version = buf.toString();
+                setText( 'haxe-version', 'haxe $version' );
             });
         }
     }

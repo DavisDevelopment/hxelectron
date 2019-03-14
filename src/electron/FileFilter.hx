@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/file-filter>
+	@see http://electronjs.org/docs/api/structures/file-filter
 **/
-@:require(js, electron) typedef FileFilter = {
+typedef FileFilter = {
 	var name : String;
 	var extensions : Array<String>;
 }

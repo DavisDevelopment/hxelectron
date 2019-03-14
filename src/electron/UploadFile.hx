@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/upload-file>
+	@see http://electronjs.org/docs/api/structures/upload-file
 **/
-@:require(js, electron) typedef UploadFile = {
+typedef UploadFile = {
 	/**
 		file.
 	**/

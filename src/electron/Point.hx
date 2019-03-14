@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/point>
+	@see http://electronjs.org/docs/api/structures/point
 **/
-@:require(js, electron) typedef Point = {
+typedef Point = {
 	var x : Float;
 	var y : Float;
 }

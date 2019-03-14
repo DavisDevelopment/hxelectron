@@ -1,15 +1,42 @@
 package electron.main;
-
 /**
 	Create and control browser windows.
-
-	See: <http://electron.atom.io/docs/api/browser-window>
+	@see http://electronjs.org/docs/api/browser-window
 **/
-@:require(js, electron) @:jsRequire("electron", "BrowserWindow") extern class BrowserWindow extends js.node.events.EventEmitter<electron.main.BrowserWindow> {
+@:jsRequire("electron", "BrowserWindow") extern class BrowserWindow extends js.node.events.EventEmitter<electron.main.BrowserWindow> {
+	static function getAllWindows():Array<electron.main.BrowserWindow>;
+	static function getFocusedWindow():haxe.extern.EitherType<electron.main.BrowserWindow, Dynamic>;
+	static function fromWebContents(webContents:electron.main.WebContents):electron.main.BrowserWindow;
+	static function fromBrowserView(browserView:electron.main.BrowserView):haxe.extern.EitherType<electron.main.BrowserWindow, Dynamic>;
+	static function fromId(id:Int):electron.main.BrowserWindow;
+	/**
+		Adds Chrome extension located at path, and returns extension's name. The method will also not return if the extension's manifest is missing or incomplete. Note: This API cannot be called before the ready event of the app module is emitted.
+	**/
+	static function addExtension(path:String):Void;
+	/**
+		Remove a Chrome extension by name. Note: This API cannot be called before the ready event of the app module is emitted.
+	**/
+	static function removeExtension(name:String):Void;
+	/**
+		Note: This API cannot be called before the ready event of the app module is emitted.
+	**/
+	static function getExtensions():Any;
+	/**
+		Adds DevTools extension located at path, and returns extension's name. The extension will be remembered so you only need to call this API once, this API is not for programming use. If you try to add an extension that has already been loaded, this method will not return and instead log a warning to the console. The method will also not return if the extension's manifest is missing or incomplete. Note: This API cannot be called before the ready event of the app module is emitted.
+	**/
+	static function addDevToolsExtension(path:String):Void;
+	/**
+		Remove a DevTools extension by name. Note: This API cannot be called before the ready event of the app module is emitted.
+	**/
+	static function removeDevToolsExtension(name:String):Void;
+	/**
+		To check if a DevTools extension is installed you can run the following: Note: This API cannot be called before the ready event of the app module is emitted.
+	**/
+	static function getDevToolsExtensions():Any;
 	/**
 		A WebContents object this window owns. All web page related events and operations will be done via it. See the webContents documentation for its methods and events.
 	**/
-	var webContents : WebContents;
+	var webContents : electron.main.WebContents;
 	/**
 		A Integer representing the unique ID of the window.
 	**/
@@ -110,7 +137,7 @@ package electron.main;
 		The window icon. On Windows it is recommended to use ICO icons to get best visual effects, you can also leave it undefined so the executable's icon will be used.
 	**/
 	@:optional
-	var icon : Dynamic; /**
+	var icon : haxe.extern.EitherType<electron.NativeImage, String>; /**
 		Whether window should be shown when created. Default is true.
 	**/
 	@:optional
@@ -122,7 +149,7 @@ package electron.main;
 		Specify parent window. Default is null.
 	**/
 	@:optional
-	var parent : BrowserWindow; /**
+	var parent : electron.main.BrowserWindow; /**
 		Whether this is a modal window. This only works when the window is a child window. Default is false.
 	**/
 	@:optional
@@ -143,7 +170,7 @@ package electron.main;
 	**/
 	@:optional
 	var enableLargerThanScreen : Bool; /**
-		Window's background color as a hexadecimal value, like #66CD00 or #FFF or #80FFFFFF (alpha is supported). Default is #FFF (white).
+		Window's background color as a hexadecimal value, like #66CD00 or #FFF or #80FFFFFF (alpha is supported if transparent is set to true). Default is #FFF (white).
 	**/
 	@:optional
 	var backgroundColor : String; /**
@@ -215,10 +242,14 @@ package electron.main;
 	**/
 	@:optional
 	var sandbox : Bool; /**
+		Whether to enable the module. Default is true.
+	**/
+	@:optional
+	var enableRemoteModule : Bool; /**
 		Sets the session used by the page. Instead of passing the Session object directly, you can also choose to use the partition option instead, which accepts a partition string. When both session and partition are provided, session will be preferred. Default is the default session.
 	**/
 	@:optional
-	var session : Session; /**
+	var session : electron.main.Session; /**
 		Sets the session used by the page according to the session's partition string. If partition starts with persist:, the page will use a persistent session available to all pages in the app with the same partition. If there is no persist: prefix, the page will use an in-memory session. By assigning the same partition, multiple pages can share the same session. Default is the default session.
 	**/
 	@:optional
@@ -267,10 +298,6 @@ package electron.main;
 	**/
 	@:optional
 	var experimentalFeatures : Bool; /**
-		Enables Chromium's experimental canvas features. Default is false.
-	**/
-	@:optional
-	var experimentalCanvasFeatures : Bool; /**
 		Enables scroll bounce (rubber banding) effect on macOS. Default is false.
 	**/
 	@:optional
@@ -278,7 +305,7 @@ package electron.main;
 		A list of feature strings separated by ,, like CSSVariables,KeyboardEventKey to enable. The full list of supported feature strings can be found in the file.
 	**/
 	@:optional
-	var blinkFeatures : String; /**
+	var enableBlinkFeatures : String; /**
 		A list of feature strings separated by ,, like CSSVariables,KeyboardEventKey to disable. The full list of supported feature strings can be found in the file.
 	**/
 	@:optional
@@ -335,22 +362,34 @@ package electron.main;
 	**/
 	@:optional
 	var offscreen : Bool; /**
-		Whether to run Electron APIs and the specified preload script in a separate JavaScript context. Defaults to false. The context that the preload script runs in will still have full access to the document and window globals but it will use its own set of JavaScript builtins (Array, Object, JSON, etc.) and will be isolated from any changes made to the global environment by the loaded page. The Electron API will only be available in the preload script and not the loaded page. This option should be used when loading potentially untrusted remote content to ensure the loaded content cannot tamper with the preload script and any Electron APIs being used. This option uses the same technique used by . You can access this context in the dev tools by selecting the 'Electron Isolated Context' entry in the combo box at the top of the Console tab. This option is currently experimental and may change or be removed in future Electron releases.
+		Whether to run Electron APIs and the specified preload script in a separate JavaScript context. Defaults to false. The context that the preload script runs in will still have full access to the document and window globals but it will use its own set of JavaScript builtins (Array, Object, JSON, etc.) and will be isolated from any changes made to the global environment by the loaded page. The Electron API will only be available in the preload script and not the loaded page. This option should be used when loading potentially untrusted remote content to ensure the loaded content cannot tamper with the preload script and any Electron APIs being used. This option uses the same technique used by . You can access this context in the dev tools by selecting the 'Electron Isolated Context' entry in the combo box at the top of the Console tab.
 	**/
 	@:optional
 	var contextIsolation : Bool; /**
-		Whether to use native window.open(). Defaults to false. This option is currently experimental.
+		Whether to use native window.open(). If set to true, the webPreferences of child window will always be the same with parent window, regardless of the parameters passed to window.open(). Defaults to false. This option is currently experimental.
 	**/
 	@:optional
 	var nativeWindowOpen : Bool; /**
-		Whether to enable the . Defaults to the value of the nodeIntegration option. The preload script configured for the <webview> will have node integration enabled when it is executed so you should ensure remote/untrusted content is not able to create a <webview> tag with a possibly malicious preload script. You can use the will-attach-webview event on to strip away the preload script and to validate or alter the <webview>'s initial settings.
+		Whether to enable the . Defaults to the value of the nodeIntegration option. The preload script configured for the will have node integration enabled when it is executed so you should ensure remote/untrusted content is not able to create a tag with a possibly malicious preload script. You can use the will-attach-webview event on to strip away the preload script and to validate or alter the 's initial settings.
 	**/
 	@:optional
 	var webviewTag : Bool; /**
 		A list of strings that will be appended to process.argv in the renderer process of this app. Useful for passing small bits of data down to renderer process preload scripts.
 	**/
 	@:optional
-	var additionArguments : Array<String>; }; }):Void;
+	var additionalArguments : Array<String>; /**
+		Whether to enable browser style consecutive dialog protection. Default is false.
+	**/
+	@:optional
+	var safeDialogs : Bool; /**
+		The message to display when consecutive dialog protection is triggered. If not defined the default message would be used, note that currently the default message is in English and not localized.
+	**/
+	@:optional
+	var safeDialogsMessage : String; /**
+		Whether dragging and dropping a file or link onto the page causes a navigation. Default is false.
+	**/
+	@:optional
+	var navigateOnDragDrop : Bool; }; }):Void;
 	/**
 		Force closing the window, the unload and beforeunload event won't be emitted for the web page, and close event will also not be emitted for this window, but it guarantees the closed event will be emitted.
 	**/
@@ -409,41 +448,50 @@ package electron.main;
 	/**
 		Enters or leaves simple fullscreen mode. Simple fullscreen mode emulates the native fullscreen behavior found in versions of Mac OS X prior to Lion (10.7).
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function setSimpleFullScreen(flag:Bool):Void;
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function isSimpleFullScreen():Bool;
+	function isNormal():Bool;
 	/**
-		This will make a window maintain an aspect ratio. The extra size allows a developer to have space, specified in pixels, not included within the aspect ratio calculations. This API already takes into account the difference between a window's size and its content size. Consider a normal window with an HD video player and associated controls. Perhaps there are 15 pixels of controls on the left edge, 25 pixels of controls on the right edge and 50 pixels of controls below the player. In order to maintain a 16:9 aspect ratio (standard aspect ratio for HD @1920x1080) within the player itself we would call this function with arguments of 16/9 and [ 40, 50 ]. The second argument doesn't care where the extra width and height are within the content view--only that they exist. Just sum any extra width and height areas you have within the overall content view.
+		This will make a window maintain an aspect ratio. The extra size allows a developer to have space, specified in pixels, not included within the aspect ratio calculations. This API already takes into account the difference between a window's size and its content size. Consider a normal window with an HD video player and associated controls. Perhaps there are 15 pixels of controls on the left edge, 25 pixels of controls on the right edge and 50 pixels of controls below the player. In order to maintain a 16:9 aspect ratio (standard aspect ratio for HD @1920x1080) within the player itself we would call this function with arguments of 16/9 and [ 40, 50 ]. The second argument doesn't care where the extra width and height are within the content view--only that they exist. Sum any extra width and height areas you have within the overall content view. Calling this function with a value of 0 will remove any previously set aspect ratios.
 	**/
-	@:electron_platform(["macOS"])
-	function setAspectRatio(aspectRatio:Float, extraSize:Size):Void;
+	@:electron_platforms(["macOS"])
+	function setAspectRatio(aspectRatio:Float, extraSize:electron.Size):Void;
+	/**
+		Sets the background color of the window. See Setting backgroundColor.
+	**/
+	function setBackgroundColor(backgroundColor:String):Void;
 	/**
 		Uses Quick Look to preview a file at a given path.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function previewFile(path:String, ?displayName:String):Void;
 	/**
 		Closes the currently open Quick Look panel.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function closeFilePreview():Void;
 	/**
-		Resizes and moves the window to the supplied bounds
+		Resizes and moves the window to the supplied bounds. Any properties that are not supplied will default to their current values.
 	**/
-	function setBounds(bounds:Rectangle, ?animate:Bool):Void;
-	function getBounds():Rectangle;
+	function setBounds(bounds:electron.Rectangle, ?animate:Bool):Void;
+	function getBounds():electron.Rectangle;
 	/**
 		Resizes and moves the window's client area (e.g. the web page) to the supplied bounds.
 	**/
-	function setContentBounds(bounds:Rectangle, ?animate:Bool):Void;
-	function getContentBounds():Rectangle;
+	function setContentBounds(bounds:electron.Rectangle, ?animate:Bool):Void;
+	function getContentBounds():electron.Rectangle;
+	/**
+		Note: whatever the current state of the window : maximized, minimized or in fullscreen, this function always returns the position and size of the window in normal state. In normal state, getBounds and getNormalBounds returns the same Rectangle.
+	**/
+	function getNormalBounds():electron.Rectangle;
 	/**
 		Disable or enable the window.
 	**/
 	function setEnabled(enable:Bool):Void;
 	/**
-		Resizes the window to width and height.
+		Resizes the window to width and height. If width or height are below any set minimum size constraints the window will snap to its minimum size.
 	**/
 	function setSize(width:Int, height:Int, ?animate:Bool):Void;
 	function getSize():Array<Int>;
@@ -470,32 +518,32 @@ package electron.main;
 	/**
 		Sets whether the window can be moved by user. On Linux does nothing.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function setMovable(movable:Bool):Void;
 	/**
 		On Linux always returns true.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function isMovable():Bool;
 	/**
 		Sets whether the window can be manually minimized by user. On Linux does nothing.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function setMinimizable(minimizable:Bool):Void;
 	/**
 		On Linux always returns true.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function isMinimizable():Bool;
 	/**
 		Sets whether the window can be manually maximized by user. On Linux does nothing.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function setMaximizable(maximizable:Bool):Void;
 	/**
 		On Linux always returns true.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function isMaximizable():Bool;
 	/**
 		Sets whether the maximize/zoom window button toggles fullscreen mode or maximizes the window.
@@ -505,18 +553,23 @@ package electron.main;
 	/**
 		Sets whether the window can be manually closed by user. On Linux does nothing.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function setClosable(closable:Bool):Void;
 	/**
 		On Linux always returns true.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function isClosable():Bool;
 	/**
 		Sets whether the window should show always on top of other windows. After setting this, the window is still a normal window, not a toolbox window which can not be focused on.
 	**/
 	function setAlwaysOnTop(flag:Bool, ?level:String, ?relativeLevel:Int):Void;
 	function isAlwaysOnTop():Bool;
+	/**
+		Moves window to top(z-order) regardless of focus
+	**/
+	@:electron_platforms(["macOS", "Windows"])
+	function moveTop():Void;
 	/**
 		Moves window to the center of the screen.
 	**/
@@ -537,7 +590,7 @@ package electron.main;
 	/**
 		Changes the attachment point for sheets on macOS. By default, sheets are attached just below the window frame, but you may want to display them beneath a HTML-rendered toolbar. For example:
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function setSheetOffset(offsetY:Float, ?offsetX:Float):Void;
 	/**
 		Starts or stops flashing the window to attract user's attention.
@@ -559,48 +612,48 @@ package electron.main;
 	/**
 		Hooks a windows message. The callback is called when the message is received in the WndProc.
 	**/
-	@:electron_platform(["Windows"])
+	@:electron_platforms(["Windows"])
 	function hookWindowMessage(message:Int, callback:haxe.Constraints.Function):Void;
-	@:electron_platform(["Windows"])
+	@:electron_platforms(["Windows"])
 	function isWindowMessageHooked(message:Int):Bool;
 	/**
 		Unhook the window message.
 	**/
-	@:electron_platform(["Windows"])
+	@:electron_platforms(["Windows"])
 	function unhookWindowMessage(message:Int):Void;
 	/**
 		Unhooks all of the window messages.
 	**/
-	@:electron_platform(["Windows"])
+	@:electron_platforms(["Windows"])
 	function unhookAllWindowMessages():Void;
 	/**
 		Sets the pathname of the file the window represents, and the icon of the file will show in window's title bar.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function setRepresentedFilename(filename:String):Void;
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function getRepresentedFilename():String;
 	/**
 		Specifies whether the window’s document has been edited, and the icon in title bar will become gray when set to true.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function setDocumentEdited(edited:Bool):Void;
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function isDocumentEdited():Bool;
 	function focusOnWebView():Void;
 	function blurWebView():Void;
 	/**
 		Same as webContents.capturePage([rect, ]callback).
 	**/
-	function capturePage(?rect:Rectangle, callback:haxe.Constraints.Function):Void;
+	function capturePage(?rect:electron.Rectangle, callback:haxe.Constraints.Function):Void;
 	/**
 		Same as webContents.loadURL(url[, options]). The url can be a remote address (e.g. http://) or a path to a local HTML file using the file:// protocol. To ensure that file URLs are properly formatted, it is recommended to use Node's url.format method: You can load a URL using a POST request with URL-encoded data by doing the following:
 	**/
 	function loadURL(url:String, ?options:{ /**
-		A HTTP Referrer url.
+		An HTTP Referrer url.
 	**/
 	@:optional
-	var httpReferrer : String; /**
+	var httpReferrer : haxe.extern.EitherType<String, electron.Referrer>; /**
 		A user agent originating the request.
 	**/
 	@:optional
@@ -609,7 +662,7 @@ package electron.main;
 	**/
 	@:optional
 	var extraHeaders : String; @:optional
-	var postData : Dynamic; /**
+	var postData : haxe.extern.EitherType<Array<electron.UploadRawData>, haxe.extern.EitherType<Array<electron.UploadFile>, Array<electron.UploadBlob>>>; /**
 		Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
 	**/
 	@:optional
@@ -617,7 +670,19 @@ package electron.main;
 	/**
 		Same as webContents.loadFile, filePath should be a path to an HTML file relative to the root of your application.  See the webContents docs for more information.
 	**/
-	function loadFile(filePath:String):Void;
+	function loadFile(filePath:String, ?options:{ /**
+		Passed to url.format().
+	**/
+	@:optional
+	var query : Any; /**
+		Passed to url.format().
+	**/
+	@:optional
+	var search : String; /**
+		Passed to url.format().
+	**/
+	@:optional
+	var hash : String; }):Void;
 	/**
 		Same as webContents.reload.
 	**/
@@ -625,57 +690,61 @@ package electron.main;
 	/**
 		Sets the menu as the window's menu bar, setting it to null will remove the menu bar.
 	**/
-	@:electron_platform(["Linux", "Windows"])
-	function setMenu(menu:Dynamic):Void;
+	@:electron_platforms(["Linux", "Windows"])
+	function setMenu(menu:haxe.extern.EitherType<electron.main.Menu, Dynamic>):Void;
 	/**
 		Sets progress value in progress bar. Valid range is [0, 1.0]. Remove progress bar when progress < 0; Change to indeterminate mode when progress > 1. On Linux platform, only supports Unity desktop environment, you need to specify the *.desktop file name to desktopName field in package.json. By default, it will assume app.getName().desktop. On Windows, a mode can be passed. Accepted values are none, normal, indeterminate, error, and paused. If you call setProgressBar without a mode set (but with a value within the valid range), normal will be assumed.
 	**/
 	function setProgressBar(progress:Float, ?options:{ /**
 		Mode for the progress bar. Can be none, normal, indeterminate, error or paused.
 	**/
-	@:optional
 	var mode : String; }):Void;
 	/**
 		Sets a 16 x 16 pixel overlay onto the current taskbar icon, usually used to convey some sort of application status or to passively notify the user.
 	**/
-	@:electron_platform(["Windows"])
-	function setOverlayIcon(overlay:NativeImage, description:String):Void;
+	@:electron_platforms(["Windows"])
+	function setOverlayIcon(overlay:haxe.extern.EitherType<electron.NativeImage, Dynamic>, description:String):Void;
 	/**
 		Sets whether the window should have a shadow. On Windows and Linux does nothing.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function setHasShadow(hasShadow:Bool):Void;
 	/**
 		On Windows and Linux always returns true.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function hasShadow():Bool;
 	/**
 		Sets the opacity of the window. On Linux does nothing.
 	**/
-	@:electron_platform(["Windows", "macOS"])
+	@:electron_platforms(["Windows", "macOS"])
 	function setOpacity(opacity:Float):Void;
-	@:electron_platform(["Windows", "macOS"])
+	@:electron_platforms(["Windows", "macOS"])
 	function getOpacity():Float;
+	/**
+		Setting a window shape determines the area within the window where the system permits drawing and user interaction. Outside of the given region, no pixels will be drawn and no mouse events will be registered. Mouse events outside of the region will not be received by that window, but will fall through to whatever is behind the window.
+	**/
+	@:electron_platforms(["Windows", "Linux", "Experimental"])
+	function setShape(rects:Array<electron.Rectangle>):Void;
 	/**
 		Add a thumbnail toolbar with a specified set of buttons to the thumbnail image of a window in a taskbar button layout. Returns a Boolean object indicates whether the thumbnail has been added successfully. The number of buttons in thumbnail toolbar should be no greater than 7 due to the limited room. Once you setup the thumbnail toolbar, the toolbar cannot be removed due to the platform's limitation. But you can call the API with an empty array to clean the buttons. The buttons is an array of Button objects: The flags is an array that can include following Strings:
 	**/
-	@:electron_platform(["Windows"])
-	function setThumbarButtons(buttons:Array<ThumbarButton>):Bool;
+	@:electron_platforms(["Windows"])
+	function setThumbarButtons(buttons:Array<electron.ThumbarButton>):Bool;
 	/**
-		Sets the region of the window to show as the thumbnail image displayed when hovering over the window in the taskbar. You can reset the thumbnail to be the entire window by specifying an empty region: {x: 0, y: 0, width: 0, height: 0}.
+		Sets the region of the window to show as the thumbnail image displayed when hovering over the window in the taskbar. You can reset the thumbnail to be the entire window by specifying an empty region: { x: 0, y: 0, width: 0, height: 0 }.
 	**/
-	@:electron_platform(["Windows"])
-	function setThumbnailClip(region:Rectangle):Void;
+	@:electron_platforms(["Windows"])
+	function setThumbnailClip(region:electron.Rectangle):Void;
 	/**
 		Sets the toolTip that is displayed when hovering over the window thumbnail in the taskbar.
 	**/
-	@:electron_platform(["Windows"])
+	@:electron_platforms(["Windows"])
 	function setThumbnailToolTip(toolTip:String):Void;
 	/**
 		Sets the properties for the window's taskbar button. Note: relaunchCommand and relaunchDisplayName must always be set together. If one of those properties is not set, then neither will be used.
 	**/
-	@:electron_platform(["Windows"])
+	@:electron_platforms(["Windows"])
 	function setAppDetails(options:{ /**
 		Window's . It has to be set, otherwise the other options will have no effect.
 	**/
@@ -700,13 +769,18 @@ package electron.main;
 	/**
 		Same as webContents.showDefinitionForSelection().
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function showDefinitionForSelection():Void;
 	/**
 		Changes window icon.
 	**/
-	@:electron_platform(["Windows", "Linux"])
-	function setIcon(icon:NativeImage):Void;
+	@:electron_platforms(["Windows", "Linux"])
+	function setIcon(icon:electron.NativeImage):Void;
+	/**
+		Sets whether the window traffic light buttons should be visible. This cannot be called when titleBarStyle is set to customButtonsOnHover.
+	**/
+	@:electron_platforms(["macOS"])
+	function setWindowButtonVisibility(visible:Bool):Void;
 	/**
 		Sets whether the window menu bar should hide itself automatically. Once set the menu bar will only show when users press the single Alt key. If the menu bar is already visible, calling setAutoHideMenuBar(true) won't hide it immediately.
 	**/
@@ -715,13 +789,17 @@ package electron.main;
 	/**
 		Sets whether the menu bar should be visible. If the menu bar is auto-hide, users can still bring up the menu bar by pressing the single Alt key.
 	**/
-	@:electron_platform(["Windows", "Linux"])
+	@:electron_platforms(["Windows", "Linux"])
 	function setMenuBarVisibility(visible:Bool):Void;
 	function isMenuBarVisible():Bool;
 	/**
 		Sets whether the window should be visible on all workspaces. Note: This API does nothing on Windows.
 	**/
-	function setVisibleOnAllWorkspaces(visible:Bool):Void;
+	function setVisibleOnAllWorkspaces(visible:Bool, ?options:{ /**
+		Sets whether the window should be visible above fullscreen windows
+	**/
+	@:optional
+	var visibleOnFullScreen : Bool; }):Void;
 	/**
 		Note: This API always returns false on Windows.
 	**/
@@ -737,224 +815,217 @@ package electron.main;
 	/**
 		Prevents the window contents from being captured by other apps. On macOS it sets the NSWindow's sharingType to NSWindowSharingNone. On Windows it calls SetWindowDisplayAffinity with WDA_MONITOR.
 	**/
-	@:electron_platform(["macOS", "Windows"])
+	@:electron_platforms(["macOS", "Windows"])
 	function setContentProtection(enable:Bool):Void;
 	/**
 		Changes whether the window can be focused.
 	**/
-	@:electron_platform(["Windows"])
+	@:electron_platforms(["Windows"])
 	function setFocusable(focusable:Bool):Void;
 	/**
 		Sets parent as current window's parent window, passing null will turn current window into a top-level window.
 	**/
-	@:electron_platform(["Linux", "macOS"])
-	function setParentWindow(parent:BrowserWindow):Void;
-	function getParentWindow():BrowserWindow;
-	function getChildWindows():Array<BrowserWindow>;
+	@:electron_platforms(["Linux", "macOS"])
+	function setParentWindow(parent:electron.main.BrowserWindow):Void;
+	function getParentWindow():electron.main.BrowserWindow;
+	function getChildWindows():Array<electron.main.BrowserWindow>;
 	/**
 		Controls whether to hide cursor when typing.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function setAutoHideCursor(autoHide:Bool):Void;
 	/**
 		Selects the previous tab when native tabs are enabled and there are other tabs in the window.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function selectPreviousTab():Void;
 	/**
 		Selects the next tab when native tabs are enabled and there are other tabs in the window.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function selectNextTab():Void;
 	/**
 		Merges all windows into one window with multiple tabs when native tabs are enabled and there is more than one open window.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function mergeAllWindows():Void;
 	/**
 		Moves the current tab into a new window if native tabs are enabled and there is more than one tab in the current window.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function moveTabToNewWindow():Void;
 	/**
 		Toggles the visibility of the tab bar if native tabs are enabled and there is only one tab in the current window.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function toggleTabBar():Void;
 	/**
 		Adds a window as a tab on this window, after the tab for the window instance.
 	**/
-	@:electron_platform(["macOS"])
-	function addTabbedWindow(browserWindow:BrowserWindow):Void;
+	@:electron_platforms(["macOS"])
+	function addTabbedWindow(browserWindow:electron.main.BrowserWindow):Void;
 	/**
 		Adds a vibrancy effect to the browser window. Passing null or an empty string will remove the vibrancy effect on the window.
 	**/
-	@:electron_platform(["macOS"])
+	@:electron_platforms(["macOS"])
 	function setVibrancy(type:String):Void;
 	/**
 		Sets the touchBar layout for the current window. Specifying null or undefined clears the touch bar. This method only has an effect if the machine has a touch bar and is running on macOS 10.12.1+. Note: The TouchBar API is currently experimental and may change or be removed in future Electron releases.
 	**/
-	@:electron_platform(["macOS", "Experimental"])
-	function setTouchBar(touchBar:TouchBar):Void;
-	@:electron_platform(["Experimental"])
-	function setBrowserView(browserView:BrowserView):Void;
+	@:electron_platforms(["macOS", "Experimental"])
+	function setTouchBar(touchBar:electron.main.TouchBar):Void;
+	@:electron_platforms(["Experimental"])
+	function setBrowserView(browserView:electron.main.BrowserView):Void;
 	/**
 		Note: The BrowserView API is currently experimental and may change or be removed in future Electron releases.
 	**/
-	@:electron_platform(["Experimental"])
-	function getBrowserView():Dynamic;
-	static function getAllWindows():Array<BrowserWindow>;
-	static function getFocusedWindow():BrowserWindow;
-	static function fromWebContents(webContents:WebContents):BrowserWindow;
-	static function fromBrowserView(browserView:BrowserView):Dynamic;
-	static function fromId(id:Int):BrowserWindow;
-	/**
-		Adds Chrome extension located at path, and returns extension's name. The method will also not return if the extension's manifest is missing or incomplete. Note: This API cannot be called before the ready event of the app module is emitted.
-	**/
-	static function addExtension(path:String):Void;
-	/**
-		Remove a Chrome extension by name. Note: This API cannot be called before the ready event of the app module is emitted.
-	**/
-	static function removeExtension(name:String):Void;
-	/**
-		Note: This API cannot be called before the ready event of the app module is emitted.
-	**/
-	static function getExtensions():Dynamic;
-	/**
-		Adds DevTools extension located at path, and returns extension's name. The extension will be remembered so you only need to call this API once, this API is not for programming use. If you try to add an extension that has already been loaded, this method will not return and instead log a warning to the console. The method will also not return if the extension's manifest is missing or incomplete. Note: This API cannot be called before the ready event of the app module is emitted.
-	**/
-	static function addDevToolsExtension(path:String):Void;
-	/**
-		Remove a DevTools extension by name. Note: This API cannot be called before the ready event of the app module is emitted.
-	**/
-	static function removeDevToolsExtension(name:String):Void;
-	/**
-		To check if a DevTools extension is installed you can run the following: Note: This API cannot be called before the ready event of the app module is emitted.
-	**/
-	static function getDevToolsExtensions():Dynamic;
+	@:electron_platforms(["Experimental"])
+	function getBrowserView():haxe.extern.EitherType<electron.main.BrowserView, Dynamic>;
 }
-
-/**
-**/
-@:require(js, electron) @:enum abstract BrowserWindowEvent<T:(haxe.Constraints.Function)>(js.node.events.EventEmitter.Event<T>) to js.node.events.EventEmitter.Event<T> {
+@:enum abstract BrowserWindowEvent<T:(haxe.Constraints.Function)>(js.node.events.EventEmitter.Event<T>) to js.node.events.EventEmitter.Event<T> {
 	/**
 		Emitted when the document changed its title, calling event.preventDefault() will prevent the native window's title from changing.
 	**/
-	var page_title_updated : electron.main.BrowserWindow.BrowserWindowEvent<js.html.Event -> String -> Void> = "page-title-updated";
+	var page_title_updated : electron.main.BrowserWindowEvent<(js.html.Event, String) -> Void> = "page-title-updated";
 	/**
-		Emitted when the window is going to be closed. It's emitted before the beforeunload and unload event of the DOM. Calling event.preventDefault() will cancel the close. Usually you would want to use the beforeunload handler to decide whether the window should be closed, which will also be called when the window is reloaded. In Electron, returning any value other than undefined would cancel the close. For example: Note: There is a subtle difference between the behaviors of window.onbeforeunload = handler and window.addEventListener('beforeunload', handler). It is recommended to always set the event.returnValue explicitly, instead of just returning a value, as the former works more consistently within Electron.
+		Emitted when the window is going to be closed. It's emitted before the beforeunload and unload event of the DOM. Calling event.preventDefault() will cancel the close. Usually you would want to use the beforeunload handler to decide whether the window should be closed, which will also be called when the window is reloaded. In Electron, returning any value other than undefined would cancel the close. For example: Note: There is a subtle difference between the behaviors of window.onbeforeunload = handler and window.addEventListener('beforeunload', handler). It is recommended to always set the event.returnValue explicitly, instead of only returning a value, as the former works more consistently within Electron.
 	**/
-	var close : electron.main.BrowserWindow.BrowserWindowEvent<js.html.Event -> Void> = "close";
+	var close : electron.main.BrowserWindowEvent<js.html.Event -> Void> = "close";
 	/**
 		Emitted when the window is closed. After you have received this event you should remove the reference to the window and avoid using it any more.
 	**/
-	var closed : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "closed";
+	var closed : electron.main.BrowserWindowEvent<Void -> Void> = "closed";
 	/**
 		Emitted when window session is going to end due to force shutdown or machine restart or session log off.
 	**/
-	var session_end : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "session-end";
+	@:electron_platforms(["Windows"])
+	var session_end : electron.main.BrowserWindowEvent<Void -> Void> = "session-end";
 	/**
 		Emitted when the web page becomes unresponsive.
 	**/
-	var unresponsive : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "unresponsive";
+	var unresponsive : electron.main.BrowserWindowEvent<Void -> Void> = "unresponsive";
 	/**
 		Emitted when the unresponsive web page becomes responsive again.
 	**/
-	var responsive : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "responsive";
+	var responsive : electron.main.BrowserWindowEvent<Void -> Void> = "responsive";
 	/**
 		Emitted when the window loses focus.
 	**/
-	var blur : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "blur";
+	var blur : electron.main.BrowserWindowEvent<Void -> Void> = "blur";
 	/**
 		Emitted when the window gains focus.
 	**/
-	var focus : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "focus";
+	var focus : electron.main.BrowserWindowEvent<Void -> Void> = "focus";
 	/**
 		Emitted when the window is shown.
 	**/
-	var show : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "show";
+	var show : electron.main.BrowserWindowEvent<Void -> Void> = "show";
 	/**
 		Emitted when the window is hidden.
 	**/
-	var hide : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "hide";
+	var hide : electron.main.BrowserWindowEvent<Void -> Void> = "hide";
 	/**
 		Emitted when the web page has been rendered (while not being shown) and window can be displayed without a visual flash.
 	**/
-	var ready_to_show : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "ready-to-show";
+	var ready_to_show : electron.main.BrowserWindowEvent<Void -> Void> = "ready-to-show";
 	/**
 		Emitted when window is maximized.
 	**/
-	var maximize : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "maximize";
+	var maximize : electron.main.BrowserWindowEvent<Void -> Void> = "maximize";
 	/**
 		Emitted when the window exits from a maximized state.
 	**/
-	var unmaximize : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "unmaximize";
+	var unmaximize : electron.main.BrowserWindowEvent<Void -> Void> = "unmaximize";
 	/**
 		Emitted when the window is minimized.
 	**/
-	var minimize : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "minimize";
+	var minimize : electron.main.BrowserWindowEvent<Void -> Void> = "minimize";
 	/**
 		Emitted when the window is restored from a minimized state.
 	**/
-	var restore : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "restore";
+	var restore : electron.main.BrowserWindowEvent<Void -> Void> = "restore";
 	/**
-		Emitted when the window is being resized.
+		Emitted before the window is resized. Calling event.preventDefault() will prevent the window from being resized. Note that this is only emitted when the window is being resized manually. Resizing the window with setBounds/setSize will not emit this event.
 	**/
-	var resize : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "resize";
+	@:electron_platforms(["macOS", "Windows"])
+	var will_resize : electron.main.BrowserWindowEvent<(js.html.Event, electron.Rectangle) -> Void> = "will-resize";
 	/**
-		Emitted when the window is being moved to a new position. Note: On macOS this event is just an alias of moved.
+		Emitted after the window has been resized.
 	**/
-	var move : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "move";
+	var resize : electron.main.BrowserWindowEvent<Void -> Void> = "resize";
+	/**
+		Emitted before the window is moved. Calling event.preventDefault() will prevent the window from being moved. Note that this is only emitted when the window is being resized manually. Resizing the window with setBounds/setSize will not emit this event.
+	**/
+	@:electron_platforms(["Windows"])
+	var will_move : electron.main.BrowserWindowEvent<(js.html.Event, electron.Rectangle) -> Void> = "will-move";
+	/**
+		Emitted when the window is being moved to a new position. Note: On macOS this event is an alias of moved.
+	**/
+	var move : electron.main.BrowserWindowEvent<Void -> Void> = "move";
 	/**
 		Emitted once when the window is moved to a new position.
 	**/
-	var moved : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "moved";
+	@:electron_platforms(["macOS"])
+	var moved : electron.main.BrowserWindowEvent<Void -> Void> = "moved";
 	/**
 		Emitted when the window enters a full-screen state.
 	**/
-	var enter_full_screen : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "enter-full-screen";
+	var enter_full_screen : electron.main.BrowserWindowEvent<Void -> Void> = "enter-full-screen";
 	/**
 		Emitted when the window leaves a full-screen state.
 	**/
-	var leave_full_screen : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "leave-full-screen";
+	var leave_full_screen : electron.main.BrowserWindowEvent<Void -> Void> = "leave-full-screen";
 	/**
 		Emitted when the window enters a full-screen state triggered by HTML API.
 	**/
-	var enter_html_full_screen : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "enter-html-full-screen";
+	var enter_html_full_screen : electron.main.BrowserWindowEvent<Void -> Void> = "enter-html-full-screen";
 	/**
 		Emitted when the window leaves a full-screen state triggered by HTML API.
 	**/
-	var leave_html_full_screen : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "leave-html-full-screen";
+	var leave_html_full_screen : electron.main.BrowserWindowEvent<Void -> Void> = "leave-html-full-screen";
+	/**
+		Emitted when the window is set or unset to show always on top of other windows.
+	**/
+	@:electron_platforms(["macOS"])
+	var always_on_top_changed : electron.main.BrowserWindowEvent<(js.html.Event, Bool) -> Void> = "always-on-top-changed";
 	/**
 		Emitted when an App Command is invoked. These are typically related to keyboard media keys or browser commands, as well as the "Back" button built into some mice on Windows. Commands are lowercased, underscores are replaced with hyphens, and the APPCOMMAND_ prefix is stripped off. e.g. APPCOMMAND_BROWSER_BACKWARD is emitted as browser-backward.
 	**/
-	var app_command : electron.main.BrowserWindow.BrowserWindowEvent<js.html.Event -> String -> Void> = "app-command";
+	@:electron_platforms(["Windows"])
+	var app_command : electron.main.BrowserWindowEvent<(js.html.Event, String) -> Void> = "app-command";
 	/**
 		Emitted when scroll wheel event phase has begun.
 	**/
-	var scroll_touch_begin : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "scroll-touch-begin";
+	@:electron_platforms(["macOS"])
+	var scroll_touch_begin : electron.main.BrowserWindowEvent<Void -> Void> = "scroll-touch-begin";
 	/**
 		Emitted when scroll wheel event phase has ended.
 	**/
-	var scroll_touch_end : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "scroll-touch-end";
+	@:electron_platforms(["macOS"])
+	var scroll_touch_end : electron.main.BrowserWindowEvent<Void -> Void> = "scroll-touch-end";
 	/**
 		Emitted when scroll wheel event phase filed upon reaching the edge of element.
 	**/
-	var scroll_touch_edge : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "scroll-touch-edge";
+	@:electron_platforms(["macOS"])
+	var scroll_touch_edge : electron.main.BrowserWindowEvent<Void -> Void> = "scroll-touch-edge";
 	/**
 		Emitted on 3-finger swipe. Possible directions are up, right, down, left.
 	**/
-	var swipe : electron.main.BrowserWindow.BrowserWindowEvent<js.html.Event -> String -> Void> = "swipe";
+	@:electron_platforms(["macOS"])
+	var swipe : electron.main.BrowserWindowEvent<(js.html.Event, String) -> Void> = "swipe";
 	/**
 		Emitted when the window opens a sheet.
 	**/
-	var sheet_begin : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "sheet-begin";
+	@:electron_platforms(["macOS"])
+	var sheet_begin : electron.main.BrowserWindowEvent<Void -> Void> = "sheet-begin";
 	/**
 		Emitted when the window has closed a sheet.
 	**/
-	var sheet_end : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "sheet-end";
+	@:electron_platforms(["macOS"])
+	var sheet_end : electron.main.BrowserWindowEvent<Void -> Void> = "sheet-end";
 	/**
 		Emitted when the native new tab button is clicked.
 	**/
-	var new_window_for_tab : electron.main.BrowserWindow.BrowserWindowEvent<Void -> Void> = "new-window-for-tab";
+	@:electron_platforms(["macOS"])
+	var new_window_for_tab : electron.main.BrowserWindowEvent<Void -> Void> = "new-window-for-tab";
 }

@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/crash-report>
+	@see http://electronjs.org/docs/api/structures/crash-report
 **/
-@:require(js, electron) typedef CrashReport = {
+typedef CrashReport = {
 	var date : Date;
 	var id : String;
 }

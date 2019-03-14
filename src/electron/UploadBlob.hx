@@ -1,9 +1,8 @@
 package electron;
-
 /**
-	See: <http://electron.atom.io/docs/api/structures/upload-blob>
+	@see http://electronjs.org/docs/api/structures/upload-blob
 **/
-@:require(js, electron) typedef UploadBlob = {
+typedef UploadBlob = {
 	/**
 		blob.
 	**/
